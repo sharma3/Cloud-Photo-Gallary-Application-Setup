@@ -41,7 +41,7 @@ $result = $s3->createBucket([
 #    'SourceFile' => $uploadfile 
 #));
 # PHP version 3
-$result = $client->putObject([
+$result = $s3->putObject([
     'ACL' => 'public-read',
     'Bucket' => $bucket,
    'Key' => $uploadfile
@@ -64,9 +64,9 @@ $result = $rds->describeDBInstances([
    # 'Marker' => '<string>',
    # 'MaxRecords' => <integer>,
 ]);
-$endpoint = $result['DBInstances']['Endpoint']['Address']
-    echo "============\n". $endpoint . "================";^M
-//echo "begin database";^M
+$endpoint = $result['DBInstances']['Endpoint']['Address'];
+    echo "============\n". $endpoint . "================";
+//echo "begin database";
 $link = mysqli_connect($endpoint,"JaySharma","sharma1234","datadb") or die("Error " . mysqli_error($link));
 /* check connection */
 if (mysqli_connect_errno()) {

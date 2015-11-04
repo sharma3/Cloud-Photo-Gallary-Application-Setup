@@ -9,7 +9,7 @@ $client = RdsClient::factory(array(
 
 
 $result = $client->describeDBInstances(array(
-    'DBInstanceIdentifier' => 'Jaysharma-RDS',
+    'DBInstanceIdentifier' => 'jaysharma-rds',
 ));
 
 

@@ -25,7 +25,7 @@ foreach ($result->getPath('DBInstances/*/Endpoint/Address') as $ep) {
 
 
 echo "begin database";
-$link = mysqli_connect($endpoint,"JaySharma","sharma1234","A20344475db") or die("Error " . mysqli_error($link));
+$link = mysqli_connect($endpoint,"JaySharma","sharma1234","datadb") or die("Error " . mysqli_error($link));
 
 /* check connection */
 if (mysqli_connect_errno()) {
@@ -43,7 +43,7 @@ else {
 
 }
 */
-$create_table = 'CREATE TABLE IF NOT EXISTS A20344475db  
+$create_table = 'CREATE TABLE IF NOT EXISTS datadb  
 (
     id INT NOT NULL AUTO_INCREMENT,
     email VARCHAR(200) NOT NULL,
