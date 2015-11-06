@@ -23,10 +23,11 @@ foreach ($result->getPath('DBInstances/*/Endpoint/Address') as $ep) {
     $endpoint = $ep;
 }
 
+print_r($endpoint);
 
 
 echo "begin database";
-$link = mysqli_connect($endpoint,"JaySharma","sharma1234","datadb") or die("Error " . mysqli_error($link));
+$link = mysqli_connect($endpoint,"JaySharma","sharma1234","datadb",3306) or die("Error " . mysqli_error($link));
 
 /* check connection */
 if (mysqli_connect_errno()) {
