@@ -53,7 +53,7 @@ $rds = new Aws\Rds\RdsClient([
     'region'  => 'us-east-1'
 ]);
 $result = $rds->describeDBInstances([
-    'DBInstanceIdentifier' => 'JaySharma-RDS',
+    'DBInstanceIdentifier' => 'jaysharma-rds',
     #'Filters' => [
     #    [
     #        'Name' => '<string>', // REQUIRED
@@ -64,7 +64,7 @@ $result = $rds->describeDBInstances([
    # 'Marker' => '<string>',
    # 'MaxRecords' => <integer>,
 ]);
-$endpoint = $result['DBInstances']['Endpoint']['Address'];
+$endpoint = $result['DBInstances'][0]['Endpoint']['Address']
     echo "============\n". $endpoint . "================";
 //echo "begin database";
 $link = mysqli_connect($endpoint,"JaySharma","sharma1234","datadb") or die("Error " . mysqli_error($link));
