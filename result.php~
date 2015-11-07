@@ -82,7 +82,7 @@ if (!$stmt->execute()) {
 printf("%d Row inserted.\n", $stmt->affected_rows);
 /* explicit close recommended */
 $stmt->close();
-$link->real_query("SELECT * FROM datadb");
+$link->real_query("SELECT * FROM data");
 $res = $link->use_result();
 echo "Result set order...\n";
 while ($row = $res->fetch_assoc()) {
@@ -94,5 +94,5 @@ $link->close();
 // add code to generate SQS Message with a value of the ID returned from the most recent inserted piece of work
 //  Add code to update database to UPDATE status column to 1 (in progress)
 
-header('Location: gallary1.php');
+//header('Location: gallary1.php');
 ?>
