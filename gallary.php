@@ -31,8 +31,8 @@ if (mysqli_connect_errno()) {
 }
 
 //below line is unsafe - $email is not checked for SQL injection -- don't do this in real life or use an ORM instead
-$link->real_query("SELECT * FROM datadb WHERE email = '$email'");
-//$link->real_query("SELECT * FROM datadb");
+$link->real_query("SELECT * FROM data WHERE email = '$email'");
+//$link->real_query("SELECT * FROM data");
 $res = $link->use_result();
 echo "Result set order...\n";
 while ($row = $res->fetch_assoc()) {

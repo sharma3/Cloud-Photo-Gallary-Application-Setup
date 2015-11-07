@@ -31,20 +31,11 @@ $result = $s3->createBucket([
     'ACL' => 'public-read',
     'Bucket' => $bucket
 ]);
-#$client->waitUntilBucketExists(array('Bucket' => $bucket));
-#Old PHP SDK version 2
-#$key = $uploadfile;
-#$result = $client->putObject(array(
-#    'ACL' => 'public-read',
-#    'Bucket' => $bucket,
-#    'Key' => $key,
-#    'SourceFile' => $uploadfile 
-#));
-# PHP version 3
 $result = $s3->putObject([
     'ACL' => 'public-read',
     'Bucket' => $bucket,
-   'Key' => $uploadfile
+   'Key' => $uploadfile,
+   'SourceFile' => $uploadfile 
 ]);  
 $url = $result['ObjectURL'];
 echo $url;
@@ -74,7 +65,7 @@ if (mysqli_connect_errno()) {
     exit();
 }
 /* Prepared statement, stage 1: prepare */
-if (!($stmt = $link->prepare("INSERT INTO datadb (id, email,phone,filename,s3rawurl,s3finishedurl,status,issubscribed) VALUES (NULL,?,?,?,?,?,?,?)"))) {
+if (!($stmt = $link->prepare("INSERT INTO data (id, email,phone,filename,s3rawurl,s3finishedurl,status,issubscribed) VALUES (NULL,?,?,?,?,?,?,?)"))) {
     echo "Prepare failed: (" . $link->errno . ") " . $link->error;
 }
 $email = $_POST['useremail'];
@@ -102,4 +93,6 @@ $link->close();
 //if not subscribed then subscribe the user and UPDATE the column in the database with a new value 0 to 1 so that then each time you don't have to resubscribe them
 // add code to generate SQS Message with a value of the ID returned from the most recent inserted piece of work
 //  Add code to update database to UPDATE status column to 1 (in progress)
+
+header('Location: gallary.php');
 ?>
