@@ -94,5 +94,5 @@ $link->close();
 // add code to generate SQS Message with a value of the ID returned from the most recent inserted piece of work
 //  Add code to update database to UPDATE status column to 1 (in progress)
 
-header('Location: gallary.php');
+header('Location: gallary1.php');
 ?>
