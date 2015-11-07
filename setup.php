@@ -40,7 +40,7 @@ else {
 
 }
 */
-$create_table = 'CREATE TABLE IF NOT EXISTS datadb  
+$create_table = 'CREATE TABLE IF NOT EXISTS data  
 (
     id INT NOT NULL AUTO_INCREMENT,
     email VARCHAR(200) NOT NULL,
