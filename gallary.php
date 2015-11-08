@@ -3,6 +3,14 @@
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="//blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
 <link rel="stylesheet" href="css/bootstrap-image-gallery.min.css">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
@@ -39,10 +47,11 @@
         </div>
     </div>
 </div>
+<div class="jumbotron">
 <?php
 session_start();
 $email = $_POST["email"];
-echo $email;
+echo "<h2>All Images of ".$email."</h2>";
 require 'vendor/autoload.php';
 
 use Aws\Rds\RdsClient;
@@ -70,17 +79,29 @@ if (mysqli_connect_errno()) {
 $link->real_query("SELECT * FROM data WHERE email = '$email'");
 //$link->real_query("SELECT * FROM data");
 $res = $link->use_result();
-echo "Result set order...\n";
 while ($row = $res->fetch_assoc()) {
 ?>
+</div>
 <div id="links">
-<?php    
-echo "<img src =\" " . $row['s3rawurl'] . "\" />";
-echo $row['id'] . "Email: " . $row['email'];
+<table border=1 height=200 width=300 class="table table-striped">
+<tr>
+<?php
+$i=0;
+while ($row = $res->fetch_assoc()) {
+if($i<4){
+echo "<td><a href=\" " . $row['s3rawurl'] . "\" data-gallery><img src =\" " . $row['s3rawurl'] . "\" height='200' width='300' class='img-rounded'></a></br>";
+$i = $i + 1;
+if($i==4){
+	echo "</tr><tr>";
+	$i=0;
+}
+}
+}
 ?>
+</tr>
+</table>
 </div>
 <?php
-}
 $link->close();
 ?>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
