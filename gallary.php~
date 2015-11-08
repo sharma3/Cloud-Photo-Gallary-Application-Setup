@@ -79,7 +79,6 @@ if (mysqli_connect_errno()) {
 $link->real_query("SELECT * FROM data WHERE email = '$email'");
 //$link->real_query("SELECT * FROM data");
 $res = $link->use_result();
-while ($row = $res->fetch_assoc()) {
 ?>
 </div>
 <div id="links">
@@ -89,7 +88,7 @@ while ($row = $res->fetch_assoc()) {
 $i=0;
 while ($row = $res->fetch_assoc()) {
 if($i<4){
-echo "<td><a href=\" " . $row['s3rawurl'] . "\" data-gallery><img src =\" " . $row['s3rawurl'] . "\" height='200' width='300' class='img-rounded'></a></br>";
+echo "<td><a href=\" " . $row['s3rawurl'] . "\" data-gallery><img src =\" " . $row['s3rawurl'] . "\" height='200' width='300' class='img-rounded'></a></td></br>";
 $i = $i + 1;
 if($i==4){
 	echo "</tr><tr>";
