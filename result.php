@@ -25,10 +25,10 @@ $s3 = new Aws\S3\S3Client([
     'region'  => 'us-east-1'
 ]);
 $bucket = uniqid("php-jay-",false);
-#$result = $client->createBucket(array(
-#    'Bucket' => $bucket
-#));
-# AWS PHP SDK version 3 create bucket
+	  $sns= new Aws\Sns\SnsClient([
+	  'version' => 'latest',
+	  'region'  => 'us-east-1'
+]);
 $result = $s3->createBucket([
     'ACL' => 'public-read',
     'Bucket' => $bucket
@@ -47,19 +47,9 @@ $rds = new Aws\Rds\RdsClient([
 ]);
 $result = $rds->describeDBInstances([
     'DBInstanceIdentifier' => 'jaysharma-rds',
-    #'Filters' => [
-    #    [
-    #        'Name' => '<string>', // REQUIRED
-    #        'Values' => ['<string>', ...], // REQUIRED
-    #    ],
-        // ...
-   # ],
-   # 'Marker' => '<string>',
-   # 'MaxRecords' => <integer>,
 ]);
 $endpoint = $result['DBInstances'][0]['Endpoint']['Address'];
     echo "============\n". $endpoint . "================";
-//echo "begin database";
 $link = mysqli_connect($endpoint,"JaySharma","sharma1234","datadb") or die("Error " . mysqli_error($link));
 /* check connection */
 if (mysqli_connect_errno()) {
@@ -84,41 +74,26 @@ if (!$stmt->execute()) {
 printf("%d Row inserted.\n", $stmt->affected_rows);
 /* explicit close recommended */
 $stmt->close();
-$sns= new Aws\Sns\SnsClient([
-            'version' => 'latest',
-            'region'  => 'us-east-1'
-]);
-$topicArn = 'A20344475-SNS-SERVICE';
-$result = $sns->createTopic([
-        'Name' => $topicArn, // REQUIRED
-]);
-$topicArn = $result['TopicArn'];
-$result = $sns->setTopicAttributes([
-        'AttributeName' => 'DisplayName', // REQUIRED
-        'AttributeValue' => 'SNS-DisplayName',
-        'TopicArn' => $topicArn, // REQUIRED
-]);
-$result = $sns->subscribe([
-                'Endpoint' => $phone,
-                'Protocol' => 'sms', // REQUIRED
-                'TopicArn' => $topicArn, // REQUIRED
-]);
-$result = $sns->publish([
-                'Message' => 'Image submit Successfully', // REQUIRED
-                'Subject' => 'Congratulations Image uploaded sucessfully',
-                'TopicArn' => $topicArn,
-]);
 $link->real_query("SELECT * FROM data");
 $res = $link->use_result();
 echo "Result set order...\n";
 while ($row = $res->fetch_assoc()) {
     echo $row['id'] . " " . $row['email']. " " . $row['phone'];
 }
-
+$sqlsns = "SELECT * FROM snstopic";
+$result = mysqli_query($link, $sqlsns);
+if (mysqli_num_rows($result) > 0) {
+    while($row = mysqli_fetch_assoc($result)) {
+	$result = $sns->publish([
+	    'Message' => 'Congratulations your Image uploaded successfully', // REQUIRED
+	    'Subject' => 'UPLOAD',
+	    'TopicArn' => $row["topicArn"],
+	]);
+    }
+} 
+else {
+    echo "SNS Result";
+}
 $link->close();
-//add code to detect if subscribed to SNS topic 
-//if not subscribed then subscribe the user and UPDATE the column in the database with a new value 0 to 1 so that then each time you don't have to resubscribe them
-// add code to generate SQS Message with a value of the ID returned from the most recent inserted piece of work
-//  Add code to update database to UPDATE status column to 1 (in progress)
 header( "refresh:3;url=gallary1.php" );
 ?>

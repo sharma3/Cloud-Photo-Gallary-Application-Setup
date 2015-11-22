@@ -42,6 +42,19 @@
     <input type="submit" value="Send File" class="btn btn-default" />
     </div>
     </div>
+    
+</form>
+<form enctype="multipart/form-data" action="sns.php" method="POST" class="form-">
+<div class="form-group">
+    <label for="inputEmail3" class="col-sm-2 control-label">Enter your number to get notification of your images</label></br>
+    <label for="inputEmail3" class="col-sm-2 control-label">Phone Number:</label>
+    <div class="col-sm-10"> <input type="phone" name="phone" class="form-control" width=200  placeholder="19876543210">
+    </div> </div>
+<div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+    <input type="submit" value="Send File" class="btn btn-default" />
+    </div>
+    </div>
 </form>
 <hr />
 <!-- The data encoding type, enctype, MUST be specified as below -->

@@ -24,22 +24,10 @@ print_r($endpoint);
 echo "begin database";
 $link = mysqli_connect($endpoint,"JaySharma","sharma1234","datadb",3306) or die("Error " . mysqli_error($link));
 
-/* check connection */
 if (mysqli_connect_errno()) {
     printf("Connect failed: %s\n", mysqli_connect_error());
     exit();
 }
-/*
-$delete_table = 'DELETE TABLE student';
-$del_tbl = $link->query($delete_table);
-if ($delete_table) {
-        echo "Table student has been deleted";
-}
-else {
-        echo "error!!";
-
-}
-*/
 $create_table = 'CREATE TABLE IF NOT EXISTS data  
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -61,17 +49,6 @@ if ($create_table) {
 }
 else {
         echo "error!!";  
-}
-
-$sql = "CREATE TABLE snsTopic
-(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-topicArn Varchar(256),
-topicName Varchar(256)
-)";
-if ($link->query($sql) === TRUE) {
-    echo "Successfully";
-} else {
-    echo "Error: " . $link->error;
 }
 
 $link->close();
