@@ -3,6 +3,8 @@
 session_start();
 // In PHP versions earlier than 4.1.0, $HTTP_POST_FILES should be used instead
 // of $_FILES.
+echo  $_POST['phoneNo'];
+$phone = $_POST['phoneNo'];
 echo $_POST['useremail'];
 $uploaddir = '/tmp/';
 $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
@@ -42,6 +44,20 @@ echo $url;
 $rds = new Aws\Rds\RdsClient([
     'version' => 'latest',
     'region'  => 'us-east-1'
+]);
+$sns= new Aws\Sns\SnsClient([
+	    'version' => 'latest',
+	    'region'  => 'us-east-1'
+]);
+$topicArn = 'A20344475-SNS-SERVICE';
+$result = $sns->createTopic([
+	'Name' => $topicArn, // REQUIRED
+]);
+$topicArn = $result['TopicArn'];
+$result = $sns->setTopicAttributes([
+	'AttributeName' => 'DisplayName', // REQUIRED
+	'AttributeValue' => 'SNS-DisplayName',
+	'TopicArn' => $topicArn, // REQUIRED
 ]);
 
 $result = $rds->describeDBInstances([
@@ -88,54 +104,37 @@ $resultsns = mysqli_query($link, $sqlsns);
 if (mysqli_num_rows($resultsns) > 0) {
 
     while($row = mysqli_fetch_assoc($resultsns)) {
-	if ($row["topicname"] == 'A20344475-SNS-SERVICE')
-	{
-		echo "topic exist";
-	}
-	else
-	{
-	$sns= new Aws\Sns\SnsClient([
-	    'version' => 'latest',
-	    'region'  => 'us-east-1'
-	]);
-	$topicName = 'A20344475-SNS-SERVICE';
-	$result = $sns->createTopic([
-	    'Name' => $topicName, // REQUIRED
-	]);
-	$topicArn = $result['TopicArn'];
-	$result = $sns->setTopicAttributes([
-	    'AttributeName' => 'DisplayName', // REQUIRED
-	    'AttributeValue' => 'SNS-DisplayName',
-	    'TopicArn' => $topicArn, // REQUIRED
-	]);
-	    $sql_insert = "INSERT INTO topic (topicArn,topicname) VALUES (?,?)";
-	if (!($stmt = $link->prepare($sql_insert))) {
-	    echo "Prepare failed: (" . $link->errno . ") " . $link->error;
-	}
-	else
-	{
-		echo "statement topic was success";
-	}
-	$stmt->bind_param("ss",$topicarn,$topicName);
-	if (!$stmt->execute()) {
-	    print "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-	}
-
-
 	if ($row["topicName"] == 'A20344475-SNS-SERVICE')
 	{
-	$sns= new Aws\Sns\SnsClient([
-	    'version' => 'latest',
-	    'region'  => 'us-east-1'
+		echo "topic exist";
+		$result = $sns->subscribe([
+	        'Endpoint' => $phone,
+		'Protocol' => 'sms', // REQUIRED
+	        'TopicArn' => $row["topicArn"], // REQUIRED
 	]);
-	$result = $sns->publish([
-	    'Message' => 'Image submit Successfully', // REQUIRED
-	    'Subject' => 'Congratulations',
-	    'TopicArn' => $row["topicArn"],
+		$result = $sns->publish([
+	        'Message' => 'Image submit Successfully', // REQUIRED
+	        'Subject' => 'Congratulations',
+	        'TopicArn' => $row["topicArn"],
 	]);
 	}
-    }
+	else
+	{
+		$sql_insert = "INSERT INTO snstopic (topicArn,topicName) VALUES (?,?)";
+		if (!($stmt = $link->prepare($sql_insert))) {
+	    		echo "Prepare failed: (" . $link->errno . ") " . $link->error;
+		}
+		else
+		{
+			echo "statement success";
+		}
+		$stmt->bind_param("js",$topicArn,$topicName);
+		if (!$stmt->execute()) {
+		    print "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+		}
+    	}
 } 
+}
 else {
     echo "results";
 }
