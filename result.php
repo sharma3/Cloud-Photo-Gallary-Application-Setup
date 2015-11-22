@@ -22,10 +22,6 @@ $s3 = new Aws\S3\S3Client([
     'version' => 'latest',
     'region'  => 'us-east-1'
 ]);
-$sns = new Aws\Sns\SnsClientt([
-    'version' => 'latest',
-    'region'  => 'us-east-1'
-]);
 $bucket = uniqid("php-jay-",false);
 #$result = $client->createBucket(array(
 #    'Bucket' => $bucket
@@ -46,17 +42,6 @@ echo $url;
 $rds = new Aws\Rds\RdsClient([
     'version' => 'latest',
     'region'  => 'us-east-1'
-]);
-
-$snstopicARN = $sns->createTopic([
-    'Name' => 'A20344475-SMS-SERVICE',
-]);
-echo $snstopicARN;
-
-$setAttribute = $sns->setTopicAttributes([
-    'AttributeName' => 'DisplayName',
-    'AttributeValue' => 'A20344475-SMS-SERVICE',
-    'TopicArn' => $snstopicARN
 ]);
 
 $result = $rds->describeDBInstances([
@@ -98,12 +83,35 @@ if (!$stmt->execute()) {
 printf("%d Row inserted.\n", $stmt->affected_rows);
 /* explicit close recommended */
 $stmt->close();
+$sqlsns = "SELECT topicArn,topicName FROM snsTopic ";
+$resultsns = mysqli_query($link, $sqlsns);
+if (mysqli_num_rows($resultsns) > 0) {
+    while($row = mysqli_fetch_assoc($resultsns)) {
+	if ($row["topicName"] == 'A20344475-SNS-SERVICE')
+	{
+	$sns= new Aws\Sns\SnsClient([
+	    'version' => 'latest',
+	    'region'  => 'us-east-1'
+	]);
+	$result = $sns->publish([
+	    'Message' => 'Image submit Successfully', // REQUIRED
+	    'Subject' => 'Congratulations',
+	    'TopicArn' => $row["topicArn"],
+	]);
+	}
+    }
+} 
+else {
+    echo "results";
+}
+$stmt->close();
 $link->real_query("SELECT * FROM data");
 $res = $link->use_result();
 echo "Result set order...\n";
 while ($row = $res->fetch_assoc()) {
     echo $row['id'] . " " . $row['email']. " " . $row['phone'];
 }
+
 $link->close();
 //add code to detect if subscribed to SNS topic 
 //if not subscribed then subscribe the user and UPDATE the column in the database with a new value 0 to 1 so that then each time you don't have to resubscribe them
