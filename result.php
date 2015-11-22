@@ -86,7 +86,42 @@ $stmt->close();
 $sqlsns = "SELECT topicArn,topicName FROM snsTopic ";
 $resultsns = mysqli_query($link, $sqlsns);
 if (mysqli_num_rows($resultsns) > 0) {
+
     while($row = mysqli_fetch_assoc($resultsns)) {
+	if ($row["topicname"] == 'A20344475-SNS-SERVICE')
+	{
+		echo "topic exist";
+	}
+	else
+	{
+	$sns= new Aws\Sns\SnsClient([
+	    'version' => 'latest',
+	    'region'  => 'us-east-1'
+	]);
+	$topicName = 'A20344475-SNS-SERVICE';
+	$result = $sns->createTopic([
+	    'Name' => $topicName, // REQUIRED
+	]);
+	$topicArn = $result['TopicArn'];
+	$result = $sns->setTopicAttributes([
+	    'AttributeName' => 'DisplayName', // REQUIRED
+	    'AttributeValue' => 'SNS-DisplayName',
+	    'TopicArn' => $topicArn, // REQUIRED
+	]);
+	    $sql_insert = "INSERT INTO topic (topicArn,topicname) VALUES (?,?)";
+	if (!($stmt = $link->prepare($sql_insert))) {
+	    echo "Prepare failed: (" . $link->errno . ") " . $link->error;
+	}
+	else
+	{
+		echo "statement topic was success";
+	}
+	$stmt->bind_param("ss",$topicarn,$topicName);
+	if (!$stmt->execute()) {
+	    print "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+	}
+
+
 	if ($row["topicName"] == 'A20344475-SNS-SERVICE')
 	{
 	$sns= new Aws\Sns\SnsClient([
