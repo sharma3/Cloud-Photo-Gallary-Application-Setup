@@ -45,21 +45,6 @@ $rds = new Aws\Rds\RdsClient([
     'version' => 'latest',
     'region'  => 'us-east-1'
 ]);
-$sns= new Aws\Sns\SnsClient([
-	    'version' => 'latest',
-	    'region'  => 'us-east-1'
-]);
-$topicArn = 'A20344475-SNS-SERVICE';
-$result = $sns->createTopic([
-	'Name' => $topicArn, // REQUIRED
-]);
-$topicArn = $result['TopicArn'];
-$result = $sns->setTopicAttributes([
-	'AttributeName' => 'DisplayName', // REQUIRED
-	'AttributeValue' => 'SNS-DisplayName',
-	'TopicArn' => $topicArn, // REQUIRED
-]);
-
 $result = $rds->describeDBInstances([
     'DBInstanceIdentifier' => 'jaysharma-rds',
     #'Filters' => [
@@ -99,46 +84,30 @@ if (!$stmt->execute()) {
 printf("%d Row inserted.\n", $stmt->affected_rows);
 /* explicit close recommended */
 $stmt->close();
-$sqlsns = "SELECT topicArn,topicName FROM snsTopic ";
-$resultsns = mysqli_query($link, $sqlsns);
-if (mysqli_num_rows($resultsns) > 0) {
-
-    while($row = mysqli_fetch_assoc($resultsns)) {
-	if ($row["topicName"] == 'A20344475-SNS-SERVICE')
-	{
-		echo "topic exist";
-		$result = $sns->subscribe([
-	        'Endpoint' => $phone,
-		'Protocol' => 'sms', // REQUIRED
-	        'TopicArn' => $row["topicArn"], // REQUIRED
-	]);
-		$result = $sns->publish([
-	        'Message' => 'Image submit Successfully', // REQUIRED
-	        'Subject' => 'Congratulations',
-	        'TopicArn' => $row["topicArn"],
-	]);
-	}
-	else
-	{
-		$sql_insert = "INSERT INTO snstopic (topicArn,topicName) VALUES (?,?)";
-		if (!($stmt = $link->prepare($sql_insert))) {
-	    		echo "Prepare failed: (" . $link->errno . ") " . $link->error;
-		}
-		else
-		{
-			echo "statement success";
-		}
-		$stmt->bind_param("js",$topicArn,$topicName);
-		if (!$stmt->execute()) {
-		    print "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-		}
-    	}
-} 
-}
-else {
-    echo "results";
-}
-$stmt->close();
+$sns= new Aws\Sns\SnsClient([
+            'version' => 'latest',
+            'region'  => 'us-east-1'
+]);
+$topicArn = 'A20344475-SNS-SERVICE';
+$result = $sns->createTopic([
+        'Name' => $topicArn, // REQUIRED
+]);
+$topicArn = $result['TopicArn'];
+$result = $sns->setTopicAttributes([
+        'AttributeName' => 'DisplayName', // REQUIRED
+        'AttributeValue' => 'SNS-DisplayName',
+        'TopicArn' => $topicArn, // REQUIRED
+]);
+$result = $sns->subscribe([
+                'Endpoint' => $phone,
+                'Protocol' => 'sms', // REQUIRED
+                'TopicArn' => $topicArn, // REQUIRED
+]);
+$result = $sns->publish([
+                'Message' => 'Image submit Successfully', // REQUIRED
+                'Subject' => 'Congratulations Image uploaded sucessfully',
+                'TopicArn' => $topicArn,
+]);
 $link->real_query("SELECT * FROM data");
 $res = $link->use_result();
 echo "Result set order...\n";
