@@ -22,6 +22,10 @@ $s3 = new Aws\S3\S3Client([
     'version' => 'latest',
     'region'  => 'us-east-1'
 ]);
+$sns = new Aws\Sns\SnsClientt([
+    'version' => 'latest',
+    'region'  => 'us-east-1'
+]);
 $bucket = uniqid("php-jay-",false);
 #$result = $client->createBucket(array(
 #    'Bucket' => $bucket
@@ -43,6 +47,18 @@ $rds = new Aws\Rds\RdsClient([
     'version' => 'latest',
     'region'  => 'us-east-1'
 ]);
+
+$snstopicARN = $sns->createTopic([
+    'Name' => 'A20344475-SMS-SERVICE',
+]);
+echo $snstopicARN;
+
+$setAttribute = $sns->setTopicAttributes([
+    'AttributeName' => 'DisplayName',
+    'AttributeValue' => 'A20344475-SMS-SERVICE',
+    'TopicArn' => $snstopicARN
+]);
+
 $result = $rds->describeDBInstances([
     'DBInstanceIdentifier' => 'jaysharma-rds',
     #'Filters' => [

@@ -62,5 +62,17 @@ if ($create_table) {
 else {
         echo "error!!";  
 }
+
+$sql = "CREATE TABLE snsTopic
+(ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+topicArn Varchar(256),
+topicName Varchar(256)
+)";
+if ($link->query($sql) === TRUE) {
+    echo "Successfully";
+} else {
+    echo "Error: " . $link->error;
+}
+
 $link->close();
 ?>
