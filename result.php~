@@ -18,17 +18,18 @@ echo 'Here is some more debugging info:';
 print_r($_FILES);
 print "</pre>";
 require 'vendor/autoload.php';
-#use Aws\S3\S3Client;
-#$client = S3Client::factory();
+
+#Creating s3 object
 $s3 = new Aws\S3\S3Client([
     'version' => 'latest',
     'region'  => 'us-east-1'
 ]);
-$bucket = uniqid("php-jay-",false);
-	  $sns= new Aws\Sns\SnsClient([
+$sns= new Aws\Sns\SnsClient([
 	  'version' => 'latest',
 	  'region'  => 'us-east-1'
 ]);
+$bucket = uniqid("php-jay-",false);
+
 $result = $s3->createBucket([
     'ACL' => 'public-read',
     'Bucket' => $bucket
@@ -41,6 +42,79 @@ $result = $s3->putObject([
 ]);  
 $url = $result['ObjectURL'];
 echo $url;
+
+
+#Bucket expiration 
+$objectrule = $s3->putBucketLifecycleConfiguration([
+    'Bucket' => $bucket,
+    'LifecycleConfiguration' => [
+        'Rules' => [ 
+            [
+                'Expiration' => [
+                    'Days' => 1,
+                ],
+                'NoncurrentVersionExpiration' => [
+                    'NoncurrentDays' => 1,
+                ],              
+                'Prefix' => ' ',
+                'Status' => 'Enabled',
+                
+            ],
+            
+        ],
+    ],
+]);
+
+#php5 imagick code from php tutorial 
+$filepath = new Imagick($uploadfile);
+$filepath->flipImage();
+mkdir("/tmp/imgk");
+$extension = end(explode('.', $filename));
+$path = '/tmp/imgk/';
+$imgid = uniqid("Image");
+$imgloc = $imgid . '.' . $extension;
+$DestPath = $path . $imgloc;
+echo $DestPath;
+$filepath->writeImage($DestPath);
+
+#alter image bucket
+
+$altbucket = uniqid("alterimage",false);
+echo $altbucket;
+$result = $s3->createBucket([
+    'ACL' => 'public-read',
+    'Bucket' => $altbucket,
+]);
+$result = $s3->putObject([
+    'ACL' => 'public-read',
+    'Bucket' => $altbucket,
+   'Key' => "alter".$imgloc,
+'SourceFile' => $DestPath,
+]);
+
+
+$objectrule = $s3->putBucketLifecycleConfiguration([
+    'Bucket' => $altbucket,
+    'LifecycleConfiguration' => [
+        'Rules' => [ 
+            [
+                'Expiration' => [
+                    'Days' => 1,
+                ],
+                 'NoncurrentVersionExpiration' => [
+                    'NoncurrentDays' => 1,
+                ],             
+                'Prefix' => ' ',
+                'Status' => 'Enabled',
+                
+            ],
+            
+        ],
+    ],
+]);
+
+
+#rds connection
 $rds = new Aws\Rds\RdsClient([
     'version' => 'latest',
     'region'  => 'us-east-1'
@@ -64,7 +138,7 @@ $email = $_POST['useremail'];
 $phone = $_POST['phone'];
 $s3rawurl = $url; //  $result['ObjectURL']; from above
 $filename = basename($_FILES['userfile']['name']);
-$s3finishedurl = "none";
+$s3finishedurl=$result['ObjectURL'];
 $status =0;
 $issubscribed=0;
 $stmt->bind_param("sssssii",$email,$phone,$filename,$s3rawurl,$s3finishedurl,$status,$issubscribed);
@@ -80,8 +154,22 @@ echo "Result set order...\n";
 while ($row = $res->fetch_assoc()) {
     echo $row['id'] . " " . $row['email']. " " . $row['phone'];
 }
+$link->close();
+
+#read replica to read the database
+$result = $rds->describeDBInstances([
+    'DBInstanceIdentifier' => 'jaysharma-readreplica',
+]);
+$endpoint = $result['DBInstances'][0]['Endpoint']['Address'];
+    echo "============\n". $endpoint . "================";
+$link1 = mysqli_connect($endpoint,"JaySharma","sharma1234","datadb") or die("Error " . mysqli_error($link));
+/* check connection */
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
 $sqlsns = "SELECT * FROM snstopic";
-$result = mysqli_query($link, $sqlsns);
+$result = mysqli_query($link1, $sqlsns);
 if (mysqli_num_rows($result) > 0) {
     while($row = mysqli_fetch_assoc($result)) {
 	$result = $sns->publish([
@@ -94,6 +182,6 @@ if (mysqli_num_rows($result) > 0) {
 else {
     echo "SNS Result";
 }
-$link->close();
+$link1->close();
 header( "refresh:3;url=gallary1.php" );
 ?>
