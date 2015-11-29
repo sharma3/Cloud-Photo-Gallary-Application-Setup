@@ -77,6 +77,45 @@ $DestPath = $path . $imgloc;
 echo $DestPath;
 $filepath->writeImage($DestPath);
 
+#alter image bucket
+
+$altbucket = uniqid("alterimage",false);
+echo $altbucket;
+$result = $s3->createBucket([
+    'ACL' => 'public-read',
+    'Bucket' => $altbucket,
+]);
+$result = $s3->putObject([
+    'ACL' => 'public-read',
+    'Bucket' => $altbucket,
+   'Key' => "alter".$imgloc,
+'SourceFile' => $DestPath,
+]);
+
+$s3finishedurl=$result['ObjectURL'];
+
+$objectrule = $s3->putBucketLifecycleConfiguration([
+    'Bucket' => $altbucket,
+    'LifecycleConfiguration' => [
+        'Rules' => [ 
+            [
+                'Expiration' => [
+                    'Days' => 1,
+                ],
+                 'NoncurrentVersionExpiration' => [
+                    'NoncurrentDays' => 1,
+                ],             
+                'Prefix' => ' ',
+                'Status' => 'Enabled',
+                
+            ],
+            
+        ],
+    ],
+]);
+
+
+#rds connection
 $rds = new Aws\Rds\RdsClient([
     'version' => 'latest',
     'region'  => 'us-east-1'
