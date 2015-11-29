@@ -58,10 +58,11 @@
     </div>
 </form>
 <hr />
-
-    <a href="introspection.php" class="btn btn-primary btn-lg disabled">Click here to do backup of your database</a>
 <br/>
 <br/>
-    <a href="gallary.php" class="btn btn-primary btn-lg disabled">Click here to visit Gallary Page</a>
+    <a href="introspection.php" class="btn btn-primary btn-lg disabled" role="button">Click here to do backup of your database</a>
+<br/>
+<br/>
+    <a href="gallary.php" class="btn btn-primary btn-lg disabled" role="button">Click here to visit Gallary Page</a>
 </body>
 </html>
