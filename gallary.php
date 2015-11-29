@@ -60,7 +60,7 @@ $client = RdsClient::factory(array(
 ));
 
 $result = $client->describeDBInstances(array(
-    'DBInstanceIdentifier' => 'jaysharma-rds',
+    'DBInstanceIdentifier' => 'jaysharma-readreplica',
 ));
 
 $endpoint = $result['DBInstances'][0]['Endpoint']['Address'];
