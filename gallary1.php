@@ -52,7 +52,6 @@
 </div>
 <?php
 session_start();
-$email = $_POST["useremail"];
 require 'vendor/autoload.php';
 echo $_GET['raw'];
 use Aws\Rds\RdsClient;
@@ -87,21 +86,12 @@ while ($row = $res->fetch_assoc()) {
 	if($i<4){
 		echo "<td><a href=\" " . $row['s3rawurl'] . "\" data-gallery><img src =\" " . $row['s3rawurl'] . "\" height='200' width='300' class='img-rounded'></a></br>";
 		echo "<b>".$row['id']."." . "Email: " . $row['email'];
-		$i = $i + 1;
-		if($i==4){
-			echo "</tr><tr>";
-			$i=0;
-		}
-	}
-	if($_GET['raw'] != 'true'){
-	if($i<4){
 		echo "<td><a href=\" " . $row['s3finishedurl'] . "\" data-gallery><img src =\" " . $row['s3finishedurl'] . "\" height='200' width='300' class='img-rounded'></a></br>";
 		echo "<b>".$row['id']."." . "Email: " . $row['email'];
 		$i = $i + 1;
 		if($i==4){
 			echo "</tr><tr>";
 			$i=0;
-		}
 		}
 	}
 }
