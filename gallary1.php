@@ -52,7 +52,7 @@
 </div>
 <?php
 session_start();
-$email = $_POST["email"];
+$email = $_POST["useremail"];
 require 'vendor/autoload.php';
 echo $_GET['raw'];
 use Aws\Rds\RdsClient;
