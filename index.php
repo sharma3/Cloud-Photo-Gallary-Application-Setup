@@ -58,13 +58,10 @@
     </div>
 </form>
 <hr />
-<div class="form-group">
-    <a href="introspection.php"><label for="DBB" class="col-sm-2 control-label">Click here to do backup of your database</label></a>
-</div>
+
+    <a href="introspection.php" class="btn btn-primary btn-lg disabled">Click here to do backup of your database</a>
 <br/>
 <br/>
-<div class="form-group">
-    <a href="gallary.php"><label for="Gl" class="col-sm-2 control-label">Click here to visit gallary</label></a>
-</div>
+    <a href="gallary.php" class="btn btn-primary btn-lg disabled">Click here to visit Gallary Page</a>
 </body>
 </html>
