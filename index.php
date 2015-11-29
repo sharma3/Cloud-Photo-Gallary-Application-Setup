@@ -44,6 +44,7 @@
     </div>
     
 </form>
+<hr/>
 <form enctype="multipart/form-data" action="sns.php" method="POST" class="form-">
 <div class="form-group">
     <label for="inputEmail3" class="col-sm-2 control-label">Enter your number to get notification of your images</label></br>
@@ -59,16 +60,11 @@
 <hr />
 <div class="form-group">
     <a href="introspection.php"><label for="DBB" class="col-sm-2 control-label">Click here to do backup of your database</label></a>
-<hr />
 </div>
 <br/>
 <br/>
 <div class="form-group">
     <a href="gallary.php"><label for="Gl" class="col-sm-2 control-label">Click here to visit gallary</label></a>
-<hr />
 </div>
-
-
-
 </body>
 </html>
