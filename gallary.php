@@ -87,8 +87,8 @@ $res = $link->use_result();
 $i=0;
 while ($row = $res->fetch_assoc()) {
 if($i<4){
-echo "<td><a href=\" " . $row['s3rawurl'] . "\" data-gallery><img src =\" " . $row['s3rawurl'] . "\" height='200' width='300' class='img-rounded'></a></td></br>";
-echo "<b>".$row['id']."." . "Email: " . $row['email'];
+		echo "<td><a href=\" " . $row['s3rawurl'] . "\" data-gallery><img src =\" " . $row['s3rawurl'] . "\" height='200' width='300' class='img-rounded'></a></br>";
+		echo "<b>".$row['id']."." . "Email: " . $row['email'];
 $i = $i + 1;
 if($i==4){
 	echo "</tr><tr>";
