@@ -50,8 +50,7 @@
 <div class="jumbotron">
 <?php
 session_start();
-$email = $_POST["email"];
-echo "<h2>All Images of ".$email."</h2>";
+echo "<h2>All Images of "</h2>";
 require 'vendor/autoload.php';
 
 use Aws\Rds\RdsClient;
@@ -76,8 +75,8 @@ if (mysqli_connect_errno()) {
 }
 
 //below line is unsafe - $email is not checked for SQL injection -- don't do this in real life or use an ORM instead
-$link->real_query("SELECT * FROM data WHERE email = '$email'");
-//$link->real_query("SELECT * FROM data");
+//$link->real_query("SELECT * FROM data WHERE email = '$email'");
+$link->real_query("SELECT * FROM data");
 $res = $link->use_result();
 ?>
 </div>
@@ -89,6 +88,7 @@ $i=0;
 while ($row = $res->fetch_assoc()) {
 if($i<4){
 echo "<td><a href=\" " . $row['s3rawurl'] . "\" data-gallery><img src =\" " . $row['s3rawurl'] . "\" height='200' width='300' class='img-rounded'></a></td></br>";
+echo "<b>".$row['id']."." . "Email: " . $row['email'];
 $i = $i + 1;
 if($i==4){
 	echo "</tr><tr>";
