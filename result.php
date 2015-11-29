@@ -92,7 +92,7 @@ $result = $s3->putObject([
    'Key' => "alter".$imgloc,
 'SourceFile' => $DestPath,
 ]);
-
+$s3finishedurl=$result['ObjectURL'];
 
 $objectrule = $s3->putBucketLifecycleConfiguration([
     'Bucket' => $altbucket,
@@ -139,7 +139,6 @@ $email = $_POST['useremail'];
 $phone = $_POST['phone'];
 $s3rawurl = $url; //  $result['ObjectURL']; from above
 $filename = basename($_FILES['userfile']['name']);
-$s3finishedurl=$result['ObjectURL'];
 $status =0;
 $issubscribed=0;
 $stmt->bind_param("sssssii",$email,$phone,$filename,$s3rawurl,$s3finishedurl,$status,$issubscribed);
