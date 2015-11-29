@@ -18,17 +18,18 @@ echo 'Here is some more debugging info:';
 print_r($_FILES);
 print "</pre>";
 require 'vendor/autoload.php';
-#use Aws\S3\S3Client;
-#$client = S3Client::factory();
+
+#Creating s3 object
 $s3 = new Aws\S3\S3Client([
     'version' => 'latest',
     'region'  => 'us-east-1'
 ]);
-$bucket = uniqid("php-jay-",false);
-	  $sns= new Aws\Sns\SnsClient([
+$sns= new Aws\Sns\SnsClient([
 	  'version' => 'latest',
 	  'region'  => 'us-east-1'
 ]);
+$bucket = uniqid("php-jay-",false);
+
 $result = $s3->createBucket([
     'ACL' => 'public-read',
     'Bucket' => $bucket
@@ -41,6 +42,41 @@ $result = $s3->putObject([
 ]);  
 $url = $result['ObjectURL'];
 echo $url;
+
+
+#Bucket expiration 
+$objectrule = $s3->putBucketLifecycleConfiguration([
+    'Bucket' => $bucket,
+    'LifecycleConfiguration' => [
+        'Rules' => [ 
+            [
+                'Expiration' => [
+                    'Days' => 1,
+                ],
+                'NoncurrentVersionExpiration' => [
+                    'NoncurrentDays' => 1,
+                ],              
+                'Prefix' => ' ',
+                'Status' => 'Enabled',
+                
+            ],
+            
+        ],
+    ],
+]);
+
+#php5 imagick code from php tutorial 
+$filepath = new Imagick($uploadfile);
+$filepath->flipImage();
+mkdir("/tmp/imgk");
+$extension = end(explode('.', $filename));
+$path = '/tmp/imgk/';
+$imgid = uniqid("Image");
+$imgloc = $imgid . '.' . $extension;
+$DestPath = $path . $imgloc;
+echo $DestPath;
+$filepath->writeImage($DestPath);
+
 $rds = new Aws\Rds\RdsClient([
     'version' => 'latest',
     'region'  => 'us-east-1'
