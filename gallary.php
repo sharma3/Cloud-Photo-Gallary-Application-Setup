@@ -50,7 +50,7 @@
 <div class="jumbotron">
 <?php
 session_start();
-echo "<h2>All Images of "</h2>";
+echo "<h2>All Images of </h2>";
 require 'vendor/autoload.php';
 
 use Aws\Rds\RdsClient;
