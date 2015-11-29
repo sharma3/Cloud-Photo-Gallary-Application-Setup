@@ -57,6 +57,9 @@
     </div>
 </form>
 <hr />
+<div class="form-group">
+    <a href="introspection.php"><label for="inputEmail3" class="col-sm-2 control-label">Click here for </label></a>
+<hr />
 <!-- The data encoding type, enctype, MUST be specified as below -->
 <form enctype="multipart/form-data" action="gallary.php" method="POST" class="form-inline">
  <div class="form-group">
