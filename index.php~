@@ -58,16 +58,15 @@
 </form>
 <hr />
 <div class="form-group">
-    <a href="introspection.php"><label for="inputEmail3" class="col-sm-2 control-label">Click here to do backup of your database</label></a></br>
+    <a href="introspection.php"><label for="DBB" class="col-sm-2 control-label">Click here to do backup of your database</label></a>
+</br>
 <hr />
-<!-- The data encoding type, enctype, MUST be specified as below -->
-<form enctype="multipart/form-data" action="gallary.php" method="POST" class="form-inline">
- <div class="form-group">
-    <label for="inputEmail3">Enter Email Id for Images:</label>
-    <input type="email" name="email" class="form-control" placeholder="example@example.com">
-    </div>
-    <input type="submit" value="Load Gallery" class="btn btn-primary"/>
-</form>
+</div>
+<div class="form-group">
+    <a href="gallary.php"><label for="Gl" class="col-sm-2 control-label">Click here to visit gallary</label></a>
+</br>
+<hr />
+</div>
 
 
 
