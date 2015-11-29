@@ -54,7 +54,7 @@
 session_start();
 $email = $_POST["email"];
 require 'vendor/autoload.php';
-
+echo $_GET['raw'];
 use Aws\Rds\RdsClient;
 $client = RdsClient::factory(array(
 'version' => 'latest',
@@ -62,7 +62,7 @@ $client = RdsClient::factory(array(
 ));
 
 $result = $client->describeDBInstances(array(
-    'DBInstanceIdentifier' => 'jaysharma-rds',
+    'DBInstanceIdentifier' => 'jaysharma-readreplica',
 ));
 
 $endpoint = $result['DBInstances'][0]['Endpoint']['Address'];
@@ -75,9 +75,6 @@ if (mysqli_connect_errno()) {
     printf("Connect failed: %s\n", mysqli_connect_error());
     exit();
 }
-
-//below line is unsafe - $email is not checked for SQL injection -- don't do this in real life or use an ORM instead
-//$link->real_query("SELECT * FROM data WHERE email = '$email'");
 $link->real_query("SELECT * FROM data");
 $res = $link->use_result();
 ?>
@@ -87,15 +84,26 @@ $res = $link->use_result();
 <?php
 $i=0;
 while ($row = $res->fetch_assoc()) {
-if($i<4){
-echo "<td><a href=\" " . $row['s3rawurl'] . "\" data-gallery><img src =\" " . $row['s3rawurl'] . "\" height='200' width='300' class='img-rounded'></a></br>";
-echo "<b>".$row['id']."." . "Email: " . $row['email'];
-$i = $i + 1;
-if($i==4){
-	echo "</tr><tr>";
-	$i=0;
-}
-}
+	if($i<4){
+		echo "<td><a href=\" " . $row['s3rawurl'] . "\" data-gallery><img src =\" " . $row['s3rawurl'] . "\" height='200' width='300' class='img-rounded'></a></br>";
+		echo "<b>".$row['id']."." . "Email: " . $row['email'];
+		$i = $i + 1;
+		if($i==4){
+			echo "</tr><tr>";
+			$i=0;
+		}
+	}
+	if($_GET['raw'] != 'true'){
+	if($i<4){
+		echo "<td><a href=\" " . $row['s3finishedurl'] . "\" data-gallery><img src =\" " . $row['s3finishedurl'] . "\" height='200' width='300' class='img-rounded'></a></br>";
+		echo "<b>".$row['id']."." . "Email: " . $row['email'];
+		$i = $i + 1;
+		if($i==4){
+			echo "</tr><tr>";
+			$i=0;
+		}
+		}
+	}
 }
 ?>
 </tr>
