@@ -154,8 +154,22 @@ echo "Result set order...\n";
 while ($row = $res->fetch_assoc()) {
     echo $row['id'] . " " . $row['email']. " " . $row['phone'];
 }
+$link->close();
+
+#read replica to read the database
+$result = $rds->describeDBInstances([
+    'DBInstanceIdentifier' => 'jaysharma-readreplica',
+]);
+$endpoint = $result['DBInstances'][0]['Endpoint']['Address'];
+    echo "============\n". $endpoint . "================";
+$link1 = mysqli_connect($endpoint,"JaySharma","sharma1234","datadb") or die("Error " . mysqli_error($link));
+/* check connection */
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
 $sqlsns = "SELECT * FROM snstopic";
-$result = mysqli_query($link, $sqlsns);
+$result = mysqli_query($link1, $sqlsns);
 if (mysqli_num_rows($result) > 0) {
     while($row = mysqli_fetch_assoc($result)) {
 	$result = $sns->publish([
@@ -168,6 +182,6 @@ if (mysqli_num_rows($result) > 0) {
 else {
     echo "SNS Result";
 }
-$link->close();
+$link1->close();
 header( "refresh:3;url=gallary1.php" );
 ?>
